@@ -99,3 +99,27 @@ null
 ```
 in 키워드를 사용하여 객체안에 키가 존재하는지 확인 가능하지만,
 undefined, null 값도 존재하는 것으로 체크함
+
+#### 배열
+```javascript
+let person = {
+    name: "권혁찬",
+    age: 28,
+    member: undefined,
+    live: true,
+    nullValue: null,
+    money: 10000,
+    getMoney: function () {
+        console.log(`money : ${this.money}`);
+    }
+};
+
+let personKeys = Object.keys(person);
+console.log(personKeys);
+["name", "age", "member", "live", "nullValue", "money", "getMoney"]
+
+let personValues = Object.values(person);
+console.log(personValues);
+["권혁찬", 28, undefined, true, null, 10000, ƒ getMoney()]
+```
+Object.keys(), Object.values() 함수를 통해 객체의 키, 값을 배열로 반환 받을 수 있음.
