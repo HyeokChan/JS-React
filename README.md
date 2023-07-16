@@ -123,3 +123,152 @@ console.log(personValues);
 ["권혁찬", 28, undefined, true, null, 10000, ƒ getMoney()]
 ```
 Object.keys(), Object.values() 함수를 통해 객체의 키, 값을 배열로 반환 받을 수 있음.
+
+#### 배열 내장함수
+```javascript
+let arr = [1, 2, 3, 4];
+arr.forEach((elm) => console.log("elm", elm));
+elm 1
+elm 2
+elm 3
+elm 4
+```
+forEach : 단순한 배열의 순회
+```javascript
+let newArr = arr.map((elm) => {
+  return elm * 2;
+});
+console.log("newArr", newArr);
+newArr(4) [2, 4, 6, 8]
+```
+map : 배열을 순회하여 요소 연산 및 처리
+```javascript
+let isContains = arr.includes(number);
+console.log("isContains", isContains);
+isContains true
+```
+includes : 배열의 포함여부 체크
+```javascript
+let index = arr.indexOf(number);
+console.log("index", index);
+index 2
+```
+```javascript
+let objectArr = [
+  { num: 1, color: "red" },
+  { num: 2, color: "black" },
+  { num: 3, color: "blue" },
+  { num: 4, color: "green" },
+  { num: 5, color: "blue" }
+];
+let oIndex = objectArr.findIndex((elm) => elm.color === "green");
+oIndex = objectArr.findIndex((elm) => {
+  return elm.color === "green";
+});
+console.log("oIndex", oIndex);
+oIndex 3
+let oElement = objectArr.find((elm) => elm.color === "green");
+console.log("oElement", oElement);
+oElement {num: 4, color: "green"}
+```
+findIndex : 콜백함수를 인자로 받아서 객체의 인덱스 반환, 콜백함수로 찾는 대상의 조건을 전달
+
+find : 콜백함수를 인자로 받아서 객체의 요소를 반환, 콜백함수로 찾는 대상의 조건을 전달
+
+```javascript
+// 배열 filter
+let filteredArr = objectArr.filter((elm) => elm.color === "blue");
+console.log("filteredArr", filteredArr);
+
+filteredArr(2) [Object, Object]
+    0: Object
+        num: 3
+        color: "blue"
+    1: Object
+        num: 5
+        color: "blue"
+```
+filter : 배열에 필터 적용, 필터의 조건을 함수의 인자로 전달
+
+```javascript
+let slicedArr = objectArr.slice(1, 3);
+console.log("slicedArr", slicedArr);
+
+slicedArr(2) [Object, Object]
+    0: Object
+        num: 2
+        color: "black"
+    1: Object
+        num: 3
+        color: "blue"
+```
+slice : 배열을 인덱스 기준으로 잘라서 반환
+
+slice(a, b) : a <= index < b로, a인덱스 부터 b인덱스 전까지 반환한다.
+
+```javascript
+let arr1 = [
+  { num: 1, color: "red" },
+  { num: 2, color: "black" },
+  { num: 3, color: "blue" }
+];
+let arr2 = [
+  { num: 4, color: "green" },
+  { num: 5, color: "blue" }
+];
+let sumedArr = arr1.concat(arr2);
+console.log("sumedArr", sumedArr);
+sumedArr(5) [Object, Object, Object, Object, Object]
+    0: Object
+        num: 1
+        color: "red"
+    1: Object
+        num: 2
+        color: "black"
+    2: Object
+        num: 3
+        color: "blue"
+    3: Object
+        num: 4
+        color: "green"
+    4: Object
+        num: 5
+        color: "blue"
+```
+concat : 두 배열을 함침. arr1배열 뒤에 arr2배열 삽입
+
+```javascript
+let charArr = ["나", "다", "가"];
+charArr.sort();
+console.log("charArr", charArr);
+charArr(3) ["가", "나", "다"]
+
+let intArr = [0, 1, 3, 2, 10, 30, 20];
+intArr.sort();
+console.log("intArr", intArr);
+intArr(7) [0, 1, 2, 3, 10, 20, 30]
+const compare = (a, b) => {
+  if (a < b) {
+    return -1;
+  } else if (a > b) {
+    return 1;
+  }
+  return 0;
+};
+intArr.sort(compare);
+console.log("intArr", intArr);
+intArr(7) [0, 1, 2, 3, 10, 20, 30]
+```
+sort : 배열의 정렬
+
+기본 sort는 모든 요소를 문자열 형태로 정렬함
+
+숫자 배열을 숫자형으로 정렬하기 위해서는 compare 함수를 생성하여 인자로 전달해야함.
+
+```javascript
+let stringArr = ["권혁찬", "님", "안녕하세요"];
+let joinedArr = stringArr.join(", ");
+console.log("joinedArr", joinedArr);
+joinedArr 권혁찬, 님, 안녕하세요 
+```
+join : 배열의 요소를 함침. 인자로 delimiter 값 전달
