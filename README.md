@@ -282,3 +282,62 @@ let joinedArr = stringArr.join(", ");
 console.log("joinedArr", joinedArr);
 joinedArr 권혁찬, 님, 안녕하세요 
 ```
+
+### JavaScript 응용
+#### truthy & falsy
+true로 인식되는 truthy한 값들과 false로 인식되는 falsy한 값들로 조건문 등을 간략하게 코딩할 수 있다.
+
+truthy 값  :
+- true: 불리언 true
+- 숫자: 0을 제외한 모든 숫자(양수, 음수, 소수 등)
+- 문자열: 공백을 포함한 모든 비어있지 않은 문자열
+- 객체: 빈 객체 또는 속성이 있는 객체
+- 배열: 빈 배열 또는 요소가 있는 배열
+- 함수: 함수 객체(함수 선언식, 함수 표현식 등)
+- 정규 표현식: 빈 정규 표현식이 아닌 모든 정규 표현식
+
+falsy 값 :
+- false: 불리언 false
+- 0: 숫자 0
+- -0: 음의 숫자 0
+- 0n: BigInt의 0
+- '' 또는 "": 빈 문자열
+- null: 값이 없음을 나타내는 특별한 값
+- undefined: 값이 할당되지 않음을 나타내는 특별한 값
+- NaN: 숫자가 아님(Not-a-Number)
+
+falsy 속성을 이용하지 않고 모든 조건을 체크한 코드
+```javascript
+let person = { name: null, age: 30 };
+getName(person);
+function getName(object) {
+  if (object === undefined || object === null) {
+    console.log("객체가 아닙니다.");
+    return;
+  }
+  if (object.name === undefined || object.name === null || isNaN(object.name)) {
+    console.log("이름이 없습니다.");
+    return;
+  }
+  console.log(object.name);
+}
+```
+falsy 속성을 이용한 간략한 코드
+```javascript
+let person = { name: null, age: 30 };
+getNameFalsy(person);
+getNameFalsy(person);
+function getNameFalsy(object) {
+  if (!object) {
+    console.log("객체가 아닙니다.");
+    return;
+  }
+  if (!object.name) {
+    console.log("이름이 없습니다.");
+    return;
+  }
+  console.log(object.name);
+}
+```
+
+
