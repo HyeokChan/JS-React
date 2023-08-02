@@ -340,4 +340,65 @@ function getNameFalsy(object) {
 }
 ```
 
+#### 비동기처리 & 동기처리
+JS 엔진 구동 방식 정리
+1. 자바스크립트는 스레드를 1개만 사용함. call Stack을 1개만 가지고 있음
+2. 동기처리의 경우 먼저 등장하는 context 및 function 부터 처리하고 처리가 끝난 후 call stack에서 제거되면 다음 function을 수행함
+3. 비동기처리의 경우 main context를 call stack에 넣고 이후 setTimeout과 같은 비동기처리 function을 만났을 때 call stack에 쌓는게 아니라 web apis 영역에 추가하여 setTimeout에서 설정한 시간동안 대기함
+4. 대기시간이 끝나면 비동기로 작성된 function의 callback function을 callback queue에 넣음
+5. event loop로 인해 callback function이 callback queue에서 call stack으로 이동하고 해당 callback function을 수행함
 
+```javascript
+// 비동기 방식
+// setTimeout : JS 기본 비동기 함수
+function taskA(a, b, cb) {
+  setTimeout(() => {
+    const res = a + b;
+    cb(res);
+  }, 3000);
+}
+
+function taskB(a, cb) {
+  setTimeout(() => {
+    const res = a * 2;
+    cb(res);
+  }, 1000);
+}
+
+function taskC(a, cb) {
+  setTimeout(() => {
+    const res = a * -1;
+    cb(res);
+  }, 1000);
+}
+taskA(1, 2, (res) => {
+  console.log("A RESULT : ", res);
+});
+taskB(3, (res) => {
+  console.log("B RESULT : ", res);
+});
+taskC(14, (res) => {
+  console.log("C RESULT : ", res);
+});
+console.log("CODE END");
+
+CODE END
+B RESULT1 :6
+C RESULT1 :-14
+A RESULT1 :3
+```
+
+콜백지옥 : 하나의 function의 결과값을 다른 function에 전달해야 하는 경우 callback function을 통해 전달해야 하는데 이런 과정이 중첩되는 경우가 발생할 수 있다.
+javascript의 promise를 통해 해당 문제를 해결할 수 있다.
+```javascript
+taskA(1, 2, (a_res) => {
+  console.log("A RESULT : ", a_res);
+  taskB(a_res, (b_res) => {
+    console.log("B RESULT : ", b_res);
+    taskC(b_res, (c_res) => {
+      console.log("C RESULT : ", c_res);
+    });
+  });
+});
+console.log("CODE END");
+```
