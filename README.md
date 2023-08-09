@@ -402,3 +402,70 @@ taskA(1, 2, (a_res) => {
 });
 console.log("CODE END");
 ```
+
+#### Promise
+Promise 객체를 사용하여 비동기처리를 수행할 수 있음.
+
+.then 키워드를 사용하여 통신에 성공했을 경우 처리와, .catch 키워드를 사용하여 통신에 실패했을 경우를 처리할 수 있음.
+
+```javascript
+// Primise 객체를 사용했을 때 비동기 처리
+// function에서 Promise 객체를 반환하고, Promise 객체 생성 시에 성공, 실패에 대한 콜백함수를 인자로 받는다.
+function taskAP(a, b) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const res = a + b;
+      resolve(res);
+    }, 3000);
+  });
+}
+
+function taskBP(a) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const res = a * 2;
+      resolve(res);
+    }, 1000);
+  });
+}
+
+function taskCP(a) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const res = a * -1;
+      resolve(res);
+    }, 2000);
+  });
+}
+
+//프로미스 객체를 사용해도 콜백 지옥 형태가 나옴
+taskAP(5, 1).then((a_res) => {
+    console.log(a_res);
+    taskBP(a_res).then((b_res) => {
+        console.log(b_res);
+        taskCP(b_res).then((c_res) => {
+            console.log(c_res);
+        });
+    });
+});
+console.log("CODE END");
+```
+Promise 객체를 사용해도 실제 호출 시 callback hell 현상이 발생하는데, 이는 Promise 객체를 제대로 활용하지 않아서임.
+
+Promise 객체를 제대로 활용한 방법은 taskAP function의 콜백함수에서 taskBP를 호출하는 것이 아니라 taskAP function의 콜백함수에서 taskBP function을 반환하여 사용하는 것.
+```javascript
+// Primose 객체를 제대로 활용한 예시
+taskAP(5, 1)
+  .then((a_res) => {
+    console.log(a_res);
+    return taskBP(a_res);
+  })
+  .then((b_res) => {
+    console.log(b_res);
+    return taskCP(b_res);
+  })
+  .then((c_res) => {
+    console.log(c_res);
+  });
+console.log("CODE END");
+```
