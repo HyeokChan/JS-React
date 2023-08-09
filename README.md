@@ -511,3 +511,34 @@ getData().then((res) => {
   console.log(res);
 });
 ```
+
+### Node.js 기초
+#### 개념
+브라우저에서만 동작 가능한 v8엔진을 외부에서도 실행 가능하게 구성
+
+javascript 파일을 외부에서 실행 및 테스트 가능
+
+#### exports, require module
+Node.js에서 기능 별로 js파일을 관리할 때, 외부 js 파일을 읽어들이고 기능을 사용하기 위해서 exports, require 키워드 활용
+외부에서 접근 가능하게 설정할 파일에 exports module 키워드를 사용하고 외부 js 파일을 사용할 main js 파일에서 require 키워드를 사용
+```javascript
+// calc.js
+// 계산 기능을 하는 파일
+const add = (a, b) => a + b;
+const sub = (a, b) => a - b;
+
+// 다른 파일에서 calc.js를 사용하기 위해 module exports
+module.exports = {
+    moduleName : "calc module",
+    add : add,
+    sub : sub,
+};
+```
+```javascript
+// index.js
+// require 키워드를 통해 exports된 모듈 가져오기
+const calc = require("./calc");
+
+console.log(calc.add(1,2));
+console.log(calc.sub(10,2));
+```
