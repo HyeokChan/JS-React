@@ -520,6 +520,7 @@ javascript 파일을 외부에서 실행 및 테스트 가능
 
 #### exports, require module
 Node.js에서 기능 별로 js파일을 관리할 때, 외부 js 파일을 읽어들이고 기능을 사용하기 위해서 exports, require 키워드 활용
+
 외부에서 접근 가능하게 설정할 파일에 exports module 키워드를 사용하고 외부 js 파일을 사용할 main js 파일에서 require 키워드를 사용
 ```javascript
 // calc.js
@@ -541,4 +542,62 @@ const calc = require("./calc");
 
 console.log(calc.add(1,2));
 console.log(calc.sub(10,2));
+```
+
+#### package
+Node.js의 설정 및 관리는 package.json 파일에서 처리함
+
+- main : 패키지 실행 시 처음 접근하는 파일 설정
+- scripts > start : npm start를 통한 실행 시 자동으로 실행할 파일
+- dependencies : npm install을 통해 추가된 모듈 정보
+```json
+// package.json
+{
+  "name": "package-example1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "hyeokchan",
+  "license": "ISC",
+  "dependencies": {
+    "randomcolor": "^0.6.2"
+  }
+}
+```
+npm install을 통한 모듈 설치 시 node_modules 폴더, package-lock.json 파일 생성됨
+
+기본 package.json 파일에서는 설치한 모듈의 간략한 정보만 나타내고 package-lock.json 파일에서 설치된 모듈의 상세 정보를 관리함
+```json
+// package-lock.json
+{
+  "name": "package-example1",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "package-example1",
+      "version": "1.0.0",
+      "license": "ISC",
+      "dependencies": {
+        "randomcolor": "^0.6.2"
+      }
+    },
+    "node_modules/randomcolor": {
+      "version": "0.6.2",
+      "resolved": "https://registry.npmjs.org/randomcolor/-/randomcolor-0.6.2.tgz",
+      "integrity": "sha512-Mn6TbyYpFgwFuQ8KJKqf3bqqY9O1y37/0jgSK/61PUxV4QfIMv0+K2ioq8DfOjkBslcjwSzRfIDEXfzA9aCx7A=="
+    }
+  }
+}
+```
+node_modules 하위에 있는 모듈은 경로가 아닌 이름으로만 접근 가능
+```javascript
+const randomColor = require("randomcolor");
+console.log(randomColor());
+// #ff978c
 ```
