@@ -494,5 +494,20 @@ async function helloAsync() {
 helloAsync().then((res) => {
   console.log(res);
 });
+```
+#### fetch를 통한 API 호출
+fetch 키워드를 통해 API를 호출하고 그 결과를 Promise 객체로 받을 수 있다.
 
+https://jsonplaceholder.typicode.com/posts : API 테스트를 위한 URL
+```javascript
+async function getData() {
+  // 값을 받아오고 그 값의 json을 뽑아내기 위해서 await 키워드 사용
+  let rawResponse = await fetch("https://jsonplaceholder.typicode.com/posts");
+  return rawResponse.json();
+}
+
+// async 키워드를 통해 getData function을 비동기함수로 생성했으므로 then 키워드를 사용하여 결과값 확인
+getData().then((res) => {
+  console.log(res);
+});
 ```
