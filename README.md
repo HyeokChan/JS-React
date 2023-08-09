@@ -459,7 +459,7 @@ taskAP(5, 1)
   .then((a_res) => {
     console.log(a_res);
     return taskBP(a_res);
-  })
+  }) 
   .then((b_res) => {
     console.log(b_res);
     return taskCP(b_res);
@@ -468,4 +468,31 @@ taskAP(5, 1)
     console.log(c_res);
   });
 console.log("CODE END");
+```
+
+#### async & await
+async, await 키워드를 사용하면 비동기 처리를 보다 간편하게 처리할 수 있음
+
+async 키워드를 붙히면 promise 객체를 return 하는 비동기 처리 함수가 됨, then/catch 키워드를 사용할 수 있음
+
+await 키워드를 붙히면 해당 함수를 동기로 처리함, await 키워드는 async 키워드가 붙은 function 내에서만 사용 가능 
+
+```javascript
+// 인자로 받은 ms를 기다리는 비동기함수
+function delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function helloAsync() {
+  await delay(3000);
+  // delay function 호출 시 await 키워드를 사용하여 3초가 지나고 "hello Async"을 return 함
+  return "hello Async";
+}
+
+helloAsync().then((res) => {
+  console.log(res);
+});
+
 ```
