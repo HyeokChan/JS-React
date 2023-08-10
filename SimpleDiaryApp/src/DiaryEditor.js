@@ -1,6 +1,8 @@
-import React, {useState} from "react";
+import React, {useState, useRef} from "react";
 const DiaryEditor = () => {
-
+    // useRef dom조작을 위한 처리
+    const authorInput = useRef();
+    const contentInput = useRef();
     const [state, setState] = useState({
         author : "",
         content : "",
@@ -16,7 +18,15 @@ const DiaryEditor = () => {
     }
     
     const handleSubmit = () => {
-        console.log(state);
+        if(state.author.length < 1){
+            // ref로 가져와서 처리
+            authorInput.current.focus();
+            return;
+        }
+        if(state.content.length < 5){
+            contentInput.current.focus();
+            return;
+        }
         alert("저장되었습니다.");
     }
 
@@ -25,10 +35,10 @@ const DiaryEditor = () => {
         <div className="DiaryEditor">
             <h2>오늘의 일기</h2>
             <div>
-                <input name="author" value={state.author} onChange={handleChangeState}></input>
+                <input name="author" ref={authorInput} value={state.author} onChange={handleChangeState}></input>
             </div>
             <div>
-                <textarea name="content" value={state.content} onChange={handleChangeState}>
+                <textarea name="content" ref={contentInput} value={state.content} onChange={handleChangeState}>
                 </textarea>
             </div>
             <div>
