@@ -601,3 +601,113 @@ const randomColor = require("randomcolor");
 console.log(randomColor());
 // #ff978c
 ```
+
+### React.js 기초
+#### React 사용 이점
+1. 컴포넌트화 화면 구성으로 인한 관리 편의성, 같은 부분을 여러 소스에서 수정할 필요가 없다.
+2. Virtual Dom으로 인해 화면 렌더링 시 이점
+
+#### React 프로젝트 기본 구조
+1. public > index.html 존재, 여기서 id가 root인 div 확인 가능
+2. src > index.js에서 id가 root인 dom을 렌더링, 여기서 다른 컴포넌트 붙혀서 사용(관례상 App)
+3. src > App.js index.js에서 사용한 App 확인
+
+#### JSX 문법
+1. js에서 사용하던 기능 처리 코드와 html 소스를 함께 관리
+2. return되는 html에는 최상위 태그가 있어야 하며 닫는 태그가 필수적으로 있어야함
+3. export default 키워드를 사용하여 다른 파일에서 사용할 수 있음
+```javascript
+function App() {
+
+  let name = "권혁찬";
+  let number = 5;
+
+  const counterProps = {
+    initialValue : 5,
+    a : 1,
+    b : 2
+  };
+
+  return (
+    // 최상위 태그가 반드시 있어야 한다.
+    // 컴포넌트를 props로 줄 수도 있다.
+    <Container>
+      <div className="App">
+        <MyHeader></MyHeader>
+        {/* 자식 컴포넌트에게 값 전달, 객체를 스프레드연산자(...)를 사용하여 편하게 넘길 수 있다.*/}
+        <Counter {...counterProps}></Counter>
+        <MyFooter></MyFooter>
+      </div>
+    </Container>
+    
+  );
+}
+```
+
+#### state
+1. useState키워드를 통해 상태값을 관리함
+2. useState의 인자는 상태의 초기값 
+3. useState의 반환값은 상태값을 가지는 변수와 변수를 변경시키는 함수
+4. 상태가 변경되면 해당 화면을 rerender
+5. 하나의 컴포넌트(Counter)에 여러개의 상태변수를 가져도 상관없음.
+```javascript
+import React, {useState} from "react";
+...
+const [count, setCount] = useState(props.initialValue);
+const [count, setCount] = useState(props.initialValue);
+const onIncrease = () => {
+    setCount(count+1);
+}
+const onDecrease = () => {
+    setCount(count-1);
+}
+...
+return (
+    <div>
+        <h2>{count}</h2>
+        <button onClick={onIncrease}>+</button>
+        <button onClick={onDecrease}>-</button>
+        {/* 부모요소가 rerender가 되면 자식 요소도 rerender가 된다 */}
+        <OddEvenResult count={count}></OddEvenResult>
+    </div>
+);
+```
+#### props
+1. 부모 컴포넌트에서 자식 컴포넌트로 값을 전달하기 위한 props
+2. 부모 컴포넌트에서 자식 컴포넌트를 사용할 때 인자로 줄 수 있음
+3. 객체를 스프레드 연산자를 통해 간편하게 전달 가능
+```javascript
+const counterProps = {
+    initialValue : 5,
+    a : 1,
+    b : 2
+  };
+...
+return (
+    // 최상위 태그가 반드시 있어야 한다.
+    // 컴포넌트를 props로 줄 수도 있다.
+    <Container>
+        <div className="App">
+            <MyHeader></MyHeader>
+            {/* 자식 컴포넌트에게 값 전달, 객체를 스프레드연산자(...)를 사용하여 편하게 넘길 수 있다.*/}
+            <Counter {...counterProps}></Counter>
+            <MyFooter></MyFooter>
+        </div>
+    </Container>
+
+);
+```
+4. 자식 컴포넌트에서는 인자로 받아서 사용
+5. 부모로 부터 받은 Props가 없는 경우 에러 방지를 위해 사용하는 Props 설정 가능
+```javascript
+const Counter = (props) => {
+    ...
+    const [count, setCount] = useState(props.initialValue);
+}
+...
+// 부모로 부터 받은 Props가 없는 경우 에러 방지를 위해 사용하는 Props
+Counter.defaultProps = {
+    initialValue : 0,
+}
+```
+6. 부모 컴포넌트가 rerender되면 자식 컴포넌트도 rerender됨
