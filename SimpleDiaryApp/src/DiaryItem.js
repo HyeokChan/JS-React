@@ -1,4 +1,35 @@
-const DiaryItem = ({id, author, content, emotion, created_date}) => {
+import {useState, useRef} from 'react';
+const DiaryItem = ({id, author, content, emotion, created_date, onRemove, onEdit}) => {
+
+    const [isEdit, setIsEdit] = useState(false);
+    const toggleIsEdit = () => setIsEdit(!isEdit);
+    const [localContent, setLocalContent] = useState(content);
+
+    const localContentInput = useRef();
+
+    // 삭제 이벤트
+    const handleRemove = () => {
+        if(window.confirm(`${id}번째 일기를 정말 삭제하시겠습니까?`)){
+            onRemove(id);
+        }
+    }
+
+    const handleQuitEdit = () => {
+        toggleIsEdit();
+        setLocalContent(content);
+    }
+
+    const handleEdit = () => {
+        if(localContent.length < 5){
+            localContentInput.current.focus();
+            return;
+        }
+        if(window.confirm(`${id}번째 일기를 수정하시겠습니까?`)){
+            onEdit(id, localContent);
+            toggleIsEdit();
+        }
+    }
+
     return (
         <div className="DiaryItem">
             {/* 각 row별 고유 it를 설정해야함
@@ -12,7 +43,29 @@ const DiaryItem = ({id, author, content, emotion, created_date}) => {
                     {new Date(created_date).toLocaleDateString()}
                 </span>
             </div>
-            <div className="content">{content}</div>
+            {/* isEdit 값에 따라 render하는 코드 변경 */}
+            <div className="content">
+                {isEdit ? (
+                <>
+                    <textarea ref={localContentInput} value={localContent} onChange={(e)=>{setLocalContent(e.target.value)}}>
+                    </textarea>
+                </>
+                ) : (
+                <>{content}</>
+                )}
+            </div>
+            {isEdit ? (
+                <>
+                    <button onClick={handleQuitEdit}>수정취소</button>
+                    <button onClick={handleEdit}>수정완료</button>
+                </>
+            ) : (
+                <>
+                    <button onClick={handleRemove}>삭제하기</button>
+                    <button onClick={toggleIsEdit}>수정하기</button>
+                </>
+            )}
+            
         </div>
     )
 }

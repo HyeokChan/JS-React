@@ -1,5 +1,5 @@
 import React, {useState, useRef} from "react";
-const DiaryEditor = () => {
+const DiaryEditor = ({onCreate}) => {
     // useRef dom조작을 위한 처리
     const authorInput = useRef();
     const contentInput = useRef();
@@ -27,7 +27,11 @@ const DiaryEditor = () => {
             contentInput.current.focus();
             return;
         }
+        // props로 받은 onCreate 호출
+        onCreate(state.author, state.content, state.emotion);
         alert("저장되었습니다.");
+        // 저장 후 초기화
+        setState({author:"", content:"", emotion:1});
     }
 
     return (

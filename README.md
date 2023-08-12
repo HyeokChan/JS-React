@@ -711,3 +711,111 @@ Counter.defaultProps = {
 }
 ```
 6. 부모 컴포넌트가 rerender되면 자식 컴포넌트도 rerender됨
+
+#### react 사용자 입력 처리
+1. state변수를 입력받는 요소들의 객체로 구성할 수 있음.
+```javascript
+const [state, setState] = useState({
+        author : "",
+        content : "",
+        emotion : 1,
+    });
+```
+2. 객체로 구성 시 onChange 함수를 하나로 구성할 수 있음. 스프레드 연산자 활용
+```javascript
+// state변수를 객체로 묶으면 상태변화에 대한 처리를 공통화 할 수 있음
+const handleChangeState = (e) => {
+    setState({
+        ...state,
+        [e.target.name] : e.target.value
+    })
+}
+...
+<div>
+    <input name="author" ref={authorInput} value={state.author} onChange={handleChangeState}></input>
+</div>
+<div>
+    <textarea name="content" ref={contentInput} value={state.content} onChange={handleChangeState}>
+    </textarea>
+</div>
+```
+3. DOM 조작은 useRef 키워드를 사용하여 처리함
+4. 요소에 ref를 설정하여 어떤 변수가 해당 요소를 처리할 지 지정
+```javascript
+const authorInput = useRef();
+const contentInput = useRef();
+...
+<input name="author" ref={authorInput} value={state.author} onChange={handleChangeState}></input>
+<textarea name="content" ref={contentInput} value={state.content} onChange={handleChangeState}>
+```
+4. useRef 변수를 통해 DOM요소 편리하게 제어 (.current)
+```javascript
+if(state.author.length < 1){
+    // ref로 가져와서 처리
+    authorInput.current.focus();
+    return;
+}
+if(state.content.length < 5){
+    contentInput.current.focus();
+    return;
+}
+```
+
+#### react 배열 처리
+1. 일반적으로 배열을 처리하는 컴포넌트 하위에 배열 row1개를 처리하는 컴포넌트를 두어 처리
+   
+    (App.js > DiaryList.js > DiaryItem)
+2. 배열을 처리하는 컴포넌트에서는 부모 컴포넌트로 부터 배열 데이터를 props로 받음
+3. map 내장함수를 활용하여 반복 처리하면서 DiaryItem.js render
+```javascript
+const DiaryList = ({diaryList}) => {
+    return (
+        <div className="DiaryList">
+            <h2>일기리스트</h2>
+            <h4>{diaryList.length}개의 일기가 있습니다.</h4>
+            <div>
+                {/* map 내장 함수 사용 */}
+                {diaryList.map((it)=>(
+                    <DiaryItem key={it.id} {...it}></DiaryItem>
+                ))}
+            </div>
+        </div>
+    );
+}
+```
+4. DiaryItem에서는 map내장 함수를 통해 row별로 전달 받은 데이터를 출력
+
+#### 하나의 공통된 데이터셋을 여러 컴포넌트에서 활용해야 하는 경우
+
+DiaryEditor.js에서 신규로 작성한 데이터를 DiaryList.js에서 출력해야하는 경우 처럼 공통된 데이터셋을 사용하는 경우
+
+두 컴포넌트의 상위 컴포넌트인 App.js에 데이터셋에 대한 state변수를 생성하여 처리하면 rerender를 관리하기 편함
+
+1. App.js에 state변수와 setData를 사용하는 create 함수 생성
+```javascript
+const [data, setData] = useState([]);
+
+const dataId = useRef(0);
+
+// App.js에 create 함수를 만들어서 setData를 사용하게 하고, 그러면 저장 시에 DiaryList컴포넌트를 rerender 할 수 있다.
+const onCreate = (author, content, emotion) =>{
+const created_date = new Date().getTime();
+const newItem = {
+  author,
+  content,
+  emotion,
+  created_date,
+  id : dataId.current,
+};
+dataId.current++;
+// 원래 data에 newItem 추가
+setData([newItem, ...data]);
+}
+```
+2. DiaryEditor.js에 create함수를 props로 전달해서 사용하도록 함
+3. DiaryEditor.js에서 데이터 추가가 발생하면 App.js onCreate함수의 setData가 처리되어 DiaryList.js도 rerender 처리됨
+
+#### props 중첩 전달
+1. App.js에서 공통으로 관리하는 state변수를 하위 컴포넌트의 하위컴포넌트에 전달해야한다면 중첩으로 전달하면 된다.
+   (App.js => DiaryList => DiaryItem)
+

@@ -1,5 +1,5 @@
 import DiaryItem from "./DiaryItem"
-const DiaryList = ({diaryList}) => {
+const DiaryList = ({onRemove, onEdit, diaryList}) => {
     return (
         <div className="DiaryList">
             <h2>일기리스트</h2>
@@ -7,7 +7,7 @@ const DiaryList = ({diaryList}) => {
             <div>
                 {/* map 내장 함수 사용 */}
                 {diaryList.map((it)=>(
-                    <DiaryItem key={it.id} {...it}></DiaryItem>
+                    <DiaryItem key={it.id} {...it} onRemove={onRemove} onEdit={onEdit}></DiaryItem>
                 ))}
             </div>
         </div>
