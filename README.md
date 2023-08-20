@@ -819,3 +819,54 @@ setData([newItem, ...data]);
 1. App.js에서 공통으로 관리하는 state변수를 하위 컴포넌트의 하위컴포넌트에 전달해야한다면 중첩으로 전달하면 된다.
    (App.js => DiaryList => DiaryItem)
 
+#### React 라이프사이클
+1. React Hooks
+- 클래스형 컴포넌트에서만 사용가능한 기능들을 함수형 컴포넌트에서 사용 가능하도록 만들기 위한 기능
+- useState, useRef, useEffect 등이 있음
+2. useEffect를 이용하여 함수형 컴포넌트에서 React의 라이프사이클을 관리할 수 있음
+3. 라이프사이클로는 mount, update, unmount 상태를 가짐
+- mount : 컴포넌트가 생성되는 시점
+```javascript
+// dependency에 빈 배열을 전달하면 컴포넌트가 마운트될 때에만 동작한다.
+useEffect(()=>{
+   console.log("mount");
+},[]);
+```
+- update : 컴포넌트가 변경되는 시점
+```javascript
+// dependency에 아무값을 전달하지 않으면 컴포넌트가 변경될 때마다 동작한다.
+ useEffect(()=>{
+     console.log("update");
+ });
+
+ // dependency에 state를 전달하면 해당 state가 변경될 때에만 동작한다.
+ useEffect(()=>{
+     console.log(`count is update : ${count}`);
+     if(count > 5){
+         alert("count가 5를 넘었습니다. 따라서 1로 초기화 합니다.");
+         setCount(1);
+     }
+ },[count]);
+
+ useEffect(()=>{
+     console.log(`text is update : ${text}`);
+ },[text]);
+```
+- unmount : 컴포넌트가 사라지는 시점, mount시 동작하는 useEffect에 return 함수를 활용
+```javascript
+useEffect(()=>{
+  console.log("mount");
+
+  // Unmount되는 시점에 동작함
+  return ()=>{
+      console.log("unmount");
+  };
+}, []);
+
+return (
+  <div>
+      Unmount Testing Component
+  </div>
+);
+```
+
