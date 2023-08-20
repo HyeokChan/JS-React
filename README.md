@@ -870,3 +870,52 @@ return (
 );
 ```
 
+#### React API 호출
+1. fetch, async, await 키워드를 사용하여 api 호출 및 초기 데이터 세팅 가능
+2. useEffect 키워드를 사용하여 mount 시점에 api 호출
+```javascript
+const getDate = async()=>{
+ const res = await fetch(
+   'https://jsonplaceholder.typicode.com/comments')
+   .then((res)=>res.json());
+   
+ const initData = res.slice(0,20).map((it)=>{
+   return {
+     author : it.email,
+     content : it.body,
+     emotion : Math.floor(Math.random()*5)+1,
+     created_date : new Date().getTime(),
+     id : dataId.current++,
+   }
+ });
+ setData(initData);
+};
+
+// mount 
+useEffect(()=>{
+ getDate();
+}, []);
+```
+
+#### React 개발 시 크롬 확장프로그램 React Developer Toos 활용
+
+#### useMemo 키워드를 사용한 메모이제이션, 최적화
+1. useMemo 키워드를 사용하여 한번 계산한 값을 기억해서 연산을 최적화할 수 있다.
+2. useMemo의 첫번째 인자에는 연산을 수행하는 콜백함수를 주고 두번째 인자에는 dependency Array를 준다.
+3. dependency array가 변경되었을 때에만 연산을 재수행 한다.
+4. useMemo의 반환 값은 함수가 아니라 콜백함수의 결과값 자체이다.
+5. 일기가 수정되었을 때에는 연산을 수행하지 않고 신규등록, 삭제되었을 때에만 연산을 수행하도록 처리할 수 있다.
+```javascript
+// 메모이제이션, useMemo의 첫번째 인자인 콜백함수가 return하는 값을 기억해서 최적화
+// data.length가 변화할 때만 콜백함수 실행, 변화하지 않으면 기억하는 값을 그대로 반환
+// useMemo는 함수가 아닌 값을 리턴함, 결과값을 값으로 사용
+const getDiaryAnalysis = useMemo(() => {
+ console.log("일기 분석 시작");
+ const goodCount = data.filter((it)=>it.emotion >= 3).length;
+ const badCount = data.length - goodCount;
+ const goodRatio = Math.floor((goodCount/data.length)*100);
+ return {goodCount, badCount, goodRatio};
+}, [data.length]);
+
+const {goodCount, badCount, goodRatio} = getDiaryAnalysis;
+```
