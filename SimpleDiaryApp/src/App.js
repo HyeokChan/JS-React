@@ -3,6 +3,7 @@ import './App.css';
 import DiaryEditor from './DiaryEditor';
 import DiaryList from './DiaryList';
 import Lifecycle from './Lifecycle';
+import OptimizeTest from './OptimizeTest';
 
 function App() {
 
@@ -62,7 +63,6 @@ function App() {
   // data.length가 변화할 때만 콜백함수 실행, 변화하지 않으면 기억하는 값을 그대로 반환
   // useMemo는 함수가 아닌 값을 리턴함, 결과값을 값으로 사용
   const getDiaryAnalysis = useMemo(() => {
-    console.log("일기 분석 시작");
     const goodCount = data.filter((it)=>it.emotion >= 3).length;
     const badCount = data.length - goodCount;
     const goodRatio = Math.floor((goodCount/data.length)*100);
@@ -71,10 +71,11 @@ function App() {
 
   const {goodCount, badCount, goodRatio} = getDiaryAnalysis;
 
-  return (
+  return ( 
     <div className="App">
       {/* function 전달 */}
       {/* <Lifecycle/> */}
+      {/* <OptimizeTest></OptimizeTest> */}
       <DiaryEditor onCreate={onCreate}></DiaryEditor>
       <div>전체 일기 : {data.length}</div>
       <div>기분 좋은 일기 개수 : {goodCount}</div>

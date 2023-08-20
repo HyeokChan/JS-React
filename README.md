@@ -919,3 +919,78 @@ const getDiaryAnalysis = useMemo(() => {
 
 const {goodCount, badCount, goodRatio} = getDiaryAnalysis;
 ```
+
+#### React.memo 키워드를 통한 고차 컴포넌트의 사용, 최적화
+1. 부모 컴포넌트가 바뀌면 자식 컴포넌트들은 모두 리렌더링된다.
+2. 리렌더링 될 필요가 없는 자식 컴포넌트들도 모두 리렌더링되기 때문에 성능상의 문제를 일으킬 수 있다.
+3. 이 때 고차 컴포넌트를 사용하여 자식 컴포넌트 리렌더에 제한을 주어 자식 컴포넌트에서 props로 사용하는 값이 변경될 때에만 해당 자식 컴포넌트를 리렌더하도록 제어할 수 있다.
+4. React.memo를 통해 고차 컴포넌트로 형성할 수 있다.
+5. React.memo를 사용하지 않아서 자식 컴포넌트들을 모두 리렌더링하는 코드
+```javascript
+// text, count 하나라도 변경되면 두 컴포넌트 모두 렌더링 하는 상황
+const TextView = ({text}) => {
+    useEffect(()=>{
+        console.log(`update text : ${text}`);
+    })
+    return (
+        <div>{text}</div>
+    );
+}
+const CountView = ({count}) => {
+    useEffect(()=>{
+        console.log(`update count : ${count}`);
+    })
+    return (
+        <div>{count}</div>
+    );
+}
+```
+6. React.memo를 사용하여 props가 변경될 때에만 컴포넌트를 리렌더링하는 코드
+```javascript
+// React.memo 사용, props 변경 시에만 리렌더링
+const TextView = React.memo(({text}) => {
+    useEffect(()=>{
+        console.log(`update text : ${text}`);
+    })
+    return (
+        <div>{text}</div>
+    );
+});
+const CountView = React.memo(({count}) => {
+    useEffect(()=>{
+        console.log(`update count : ${count}`);
+    })
+    return (
+        <div>{count}</div>
+    );
+});
+```
+7. 객체를 props로 넘기는 경우 얕은 비교로 객체의 변화여부를 체크하기 때문에 값이 변하지 않더라도 렌더링 되는 문제가 발생한다.
+8. 이 때, 값을 비교하는 함수를 React.memo의 두번째 인자로 넘겨서 객체의 값 비교를 통한 렌더링이 이뤄지도록 처리할 수 있다.
+```javascript
+const CoutnerB = ({obj}) => {
+    useEffect(()=>{
+        console.log(`update count B : ${obj.count}`);
+    })
+    return (
+        <div>{obj.count}</div>
+    );
+};
+
+const areEquals = (prevProps, nextProps) => {
+    return prevProps.obj.count === nextProps.obj.count;
+};
+// props 객체의 깊은 비교(값)를 위한 인자를 함께 넘겨준다.
+const MemoizedCounterB = React.memo(CoutnerB, areEquals);
+
+...
+
+<div>
+   {/* 객체를 props로 넘긴 경우는 값이 변경된 것으로 인식한다. 객체는 얕은 비교(메모리주소)를 하기 때문에 */}
+   <h2>counter B</h2>
+   {/* <CoutnerB obj={obj}></CoutnerB> */}
+   <MemoizedCounterB obj={obj}></MemoizedCounterB>
+   <button onClick={() => setObj({count:obj.count})}>B button</button>
+</div>
+
+```
