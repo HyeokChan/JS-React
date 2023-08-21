@@ -1,13 +1,40 @@
-import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback, useReducer } from 'react';
 import './App.css';
 import DiaryEditor from './DiaryEditor';
 import DiaryList from './DiaryList';
 import Lifecycle from './Lifecycle';
 import OptimizeTest from './OptimizeTest';
+import { type } from '@testing-library/user-event/dist/type';
+
+const reducer = (state, action) => {
+  switch(action.type){
+    case 'INIT' : {
+      return action.data;
+    }
+    case 'CREATE' : {
+      const created_date = new Date().getTime();
+      const newItem = {
+        ...action.data,
+        created_date
+      }
+      return [newItem, ...state];
+    }
+    case 'REMOVE' : {
+      return state.filter((it)=>it.id !== action.targetId);
+    }
+    case 'EDIT' : {
+      return state.map((it)=>it.id === action.targetId ? {...it, content:action.newContent} : it);
+    }
+    default :
+      return state;
+  }
+}
 
 function App() {
 
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
+  // 상태변화 처리 로직 분리
+  const [data, dispatch] = useReducer(reducer, []);
 
   const dataId = useRef(0);
 
@@ -25,7 +52,8 @@ function App() {
         id : dataId.current++,
       }
     });
-    setData(initData);
+    // setData(initData);
+    dispatch({type:"INIT", data:initData});
   };
 
   // mount 
@@ -36,30 +64,39 @@ function App() {
   // App.js에 create 함수를 만들어서 setData를 사용하게 하고, 그러면 저장 시에 DiaryList컴포넌트를 rerender 할 수 있다.
   // useCallback을 사용하여 함수 재사용
   const onCreate = useCallback((author, content, emotion) =>{
-    const created_date = new Date().getTime();
-    const newItem = {
+    dispatch({type:"CREATE", data:{
       author,
       content,
       emotion,
-      created_date,
       id : dataId.current,
-    };
+    }});
+    // const created_date = new Date().getTime();
+    // const newItem = {
+    //   author,
+    //   content,
+    //   emotion,
+    //   created_date,
+    //   id : dataId.current,
+    // };
     dataId.current++;
     // 원래 data에 newItem 추가
     // 함수형 update, setData에 함수를 전달하면서 기존데이터를 인자로 받아서 신규데이터만 추가함
-    setData((data)=>[newItem, ...data]);
+    // setData((data)=>[newItem, ...data]);
   },[]);
 
-  const onRemove = (targetId) => {
-    const newDiaryList = data.filter((it) => it.id !== targetId);
-    setData(newDiaryList);
-  }
+  // 최적화
+  const onRemove = useCallback((targetId) => {
+    // const newDiaryList = data.filter((it) => it.id !== targetId);
+    // setData(data => data.filter((it) => it.id !== targetId));
+    dispatch({type:"REMOVE", targetId})
+  }, []);
 
-  const onEdit = (targetId, newContent) => {
-    setData(
-      data.map((it)=>it.id === targetId ? {...it, content:newContent} : it)
-    );
-  }
+  const onEdit = useCallback((targetId, newContent) => {
+    // setData(
+    //   (data) => data.map((it)=>it.id === targetId ? {...it, content:newContent} : it)
+    // );
+    dispatch({type:"EDIT", targetId, newContent});
+  }, []);
 
   // 메모이제이션, useMemo의 첫번째 인자인 콜백함수가 return하는 값을 기억해서 최적화
   // data.length가 변화할 때만 콜백함수 실행, 변화하지 않으면 기억하는 값을 그대로 반환

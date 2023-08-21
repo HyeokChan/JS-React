@@ -1041,3 +1041,71 @@ const onCreate = useCallback((author, content, emotion) =>{
  setData((data)=>[newItem, ...data]);
 },[]);
 ```
+
+#### useReducer 키워드를 통한 상태변화 처리 로직 분리
+1. 컴포넌트 내에 state를 처리하는 코드 부분이 많으면 가독성이나 관리능력이 떨어질 수 있다.
+2. useReducer를 통해 state의 변화를 처리하는 부분을 분리할 수 있다.
+3. useReducer의 dispatch를 사용하면 자동으로 현재값 기준으로 상태처리를 하기 때문에 useCallback의 dependency array를 빈 배열로 주었을 때 setData에 함수를 인자로 처리하는 작업을 하지 않아도 된다.
+4. useReducer 사용 코드
+- data : 관리할 state 변수
+- dispatch : state 변수를 처리할 action 이벤트
+- reducer : 분리한 state 변수 처리 로직
+- [] : state의 초기값
+```javascript
+// const [data, setData] = useState([]);
+// 상태변화 처리 로직 분리
+const [data, dispatch] = useReducer(reducer, []);
+```
+5. useState 대신에 useReducer를 사용한다.
+6. dispatch 호출 코드 
+ - type을 인자로 주어 state에 대한 처리를 분류한다.
+```javascript
+// App.js에 create 함수를 만들어서 setData를 사용하게 하고, 그러면 저장 시에 DiaryList컴포넌트를 rerender 할 수 있다.
+// useCallback을 사용하여 함수 재사용
+const onCreate = useCallback((author, content, emotion) =>{
+ dispatch({type:"CREATE", data:{
+   author,
+   content,
+   emotion,
+   id : dataId.current,
+ }});
+ // const created_date = new Date().getTime();
+ // const newItem = {
+ //   author,
+ //   content,
+ //   emotion,
+ //   created_date,
+ //   id : dataId.current,
+ // };
+ dataId.current++;
+ // 원래 data에 newItem 추가
+ // 함수형 update, setData에 함수를 전달하면서 기존데이터를 인자로 받아서 신규데이터만 추가함
+ // setData((data)=>[newItem, ...data]);
+},[]);
+```
+7. reducer 코드, action의 type과 data에 따른 처리를 수행한다.
+```javascript
+const reducer = (state, action) => {
+  switch(action.type){
+    case 'INIT' : {
+      return action.data;
+    }
+    case 'CREATE' : {
+      const created_date = new Date().getTime();
+      const newItem = {
+        ...action.data,
+        created_date
+      }
+      return [newItem, ...state];
+    }
+    case 'REMOVE' : {
+      return state.filter((it)=>it.id !== action.targetId);
+    }
+    case 'EDIT' : {
+      return state.map((it)=>it.id === action.targetId ? {...it, content:action.newContent} : it);
+    }
+    default :
+      return state;
+  }
+}
+```
