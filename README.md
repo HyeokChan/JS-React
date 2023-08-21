@@ -994,3 +994,50 @@ const MemoizedCounterB = React.memo(CoutnerB, areEquals);
 </div>
 
 ```
+
+#### useCallback 키워드를 통한 함수 재사용
+1. props로 받는 함수도 객체처럼 항상 새로운 것으로 인식한다.
+2. 그래서 함수를 props로 받는 컴포넌트들이 부모 컴포넌트가 리렌더링 됐을 때, 비효율적으로 리렌더링 될 수 있다.
+3. 이 때, useCallback키워드를 사용하여 함수를 재사용해서 비효율적인 리렌더링을 방지할 수 있다.
+4. useCallback을 사용한 코드
+```javascript
+// App.js에 create 함수를 만들어서 setData를 사용하게 하고, 그러면 저장 시에 DiaryList컴포넌트를 rerender 할 수 있다.
+// useCallback을 사용하여 함수 재사용
+const onCreate = useCallback((author, content, emotion) =>{
+ const created_date = new Date().getTime();
+ const newItem = {
+   author,
+   content,
+   emotion,
+   created_date,
+   id : dataId.current,
+ };
+ dataId.current++;
+ // 원래 data에 newItem 추가
+ // 함수형 update, setData에 함수를 전달하면서 기존데이터를 인자로 받아서 신규데이터만 추가함
+ setData([newItem, ...data]);
+},[]);
+```
+5. 해당 코드로 수정 후 DiaryEditor 컴포넌트에서 새로운 글을 작성해보면 기존에 등록된 글은 사라지고 신규로 생성한 글만 목록에 노출된다.
+6. 그 이유는 useCallback의 두번째 인자인 dependency array에 빈 배열을 주었기 때문에 함수가 App.js가 mount되는 시점에 함수를 생성하는데, 이 때 설정된 data가 없기 때문에 기존에 설정한 글은 사라지고 신규로 생성한 글만 남는다.
+7. 해당 문제를 해결하기 위해서 dependenvy array에 data를 추가하면 data가 변경될 때마다 onCreate 함수를 재생성하여 DiaryEditor 컴포넌트가 비효율적으로 리렌더링되는 문제를 다시 발생시킨다.
+8. 이 문제를 해결하기 위해서 dependency array는 빈 배열([])로 남겨두고 setData하는 부분을 수정해야한다.
+9. setData 부분에 값을 전달하는게 아니라 함수를 전달할 수 있다. data를 인자로 받는 함수를 전달하여 기존 데이터에 새로 등록한 글을 추가 하도록 처리할 수 있다.
+```javascript
+// App.js에 create 함수를 만들어서 setData를 사용하게 하고, 그러면 저장 시에 DiaryList컴포넌트를 rerender 할 수 있다.
+// useCallback을 사용하여 함수 재사용
+const onCreate = useCallback((author, content, emotion) =>{
+ const created_date = new Date().getTime();
+ const newItem = {
+   author,
+   content,
+   emotion,
+   created_date,
+   id : dataId.current,
+ };
+ dataId.current++;
+ // 원래 data에 newItem 추가
+ // 함수형 update, setData에 함수를 전달하면서 기존데이터를 인자로 받아서 신규데이터만 추가함
+ setData((data)=>[newItem, ...data]);
+},[]);
+```

@@ -1,4 +1,5 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
+// props로 받는 함수도 객체처럼 항상 새로운 것으로 인식하여 리렌더링한다.
 const DiaryEditor = ({onCreate}) => {
     // useRef dom조작을 위한 처리
     const authorInput = useRef();
@@ -34,6 +35,10 @@ const DiaryEditor = ({onCreate}) => {
         setState({author:"", content:"", emotion:1});
     }
 
+    useEffect(()=>{
+        console.log("diaryEditor render");
+    },[]);
+
     return (
         // 컴포넌트의 css 적용 관리를 용이하게 하기 위해서 최상위 태그 className 맞춤
         <div className="DiaryEditor">
@@ -62,4 +67,5 @@ const DiaryEditor = ({onCreate}) => {
     );
 }
 
-export default DiaryEditor;
+// 전체 코드를 React.memo로 묶을 필요 없이 export 부분을 묶어주면 됨
+export default React.memo(DiaryEditor);
