@@ -1109,3 +1109,63 @@ const reducer = (state, action) => {
   }
 }
 ```
+
+#### Context를 통한 props 드릴링 방지
+1. DiaryItem에 onRemove, onEdit 함수를 전달하기 위해 state를 관리하는 App 컴포넌트 부터 DiaryList 컴포넌트를 거쳐 전달했었다.
+2. 이렇게 불필요하게 props가 전달되는 것을 props 드릴링이라고 한다.
+3. props 드릴링을 방지하기 위해 data나 함수를 전역으로 관리하는 Provider를 생성하고 Provider에 data와 함수를 세팅해둔 뒤에 자식 컴포넌트 어디에서나 Provider를 통해 해당 데이터와 함수를 공급받을 수 있다.
+4. Context 생성 소스
+ - 하위 컴포넌트에서 사용하기 위해 export한다. export const로 export한 변수들은 비구조화 할당을 통해 같은 이름으로 사용할 수 있다.
+```javascript
+// 다른 하위 컴포넌트들이 context를 사용할 수 있게 하기 위해 export
+// data만 가지고 있는 context로 구성
+export const DiaryStateContext = React.createContext();
+// data를 변경시키는 함수 context로 구성
+export const DiaryDispatchContext = React.createContext();
+```
+5. 최상위에 Context.Provider를 묶어서 value를 전달할 수 있다.
+ - data를 전달하는 context와 {onCreate, onRemove, onEdit}을 전달하는 context를 분리하는 이유는 data가 변경되었을 때 함수들을 재생성하지 않기 위해서 이다.
+```javascript
+return (
+    // context 랩핑, 하위 컴포넌트들이 provider가 제공하는 데이터를 모두 사용 가능
+    <DiaryStateContext.Provider value={data}>
+      {/* data를 변화시키는 함수를 가지는 context를 따로 구성 */}
+      <DiaryDispatchContext.Provider value={memoizedDispatches}>
+        <div className="App">
+          {/* function 전달 */}
+          {/* <Lifecycle/> */}
+          {/* <OptimizeTest></OptimizeTest> */}
+          {/* <DiaryEditor onCreate={onCreate}></DiaryEditor> */}
+          <DiaryEditor></DiaryEditor>
+          <div>전체 일기 : {data.length}</div>
+          <div>기분 좋은 일기 개수 : {goodCount}</div>
+          <div>기분 나쁜 일기 개수 : {badCount}</div>
+          <div>기분 좋은 일기 비율 : {goodRatio}</div>
+          {/* <DiaryList onRemove={onRemove} onEdit={onEdit} diaryList={data}></DiaryList> */}
+          <DiaryList></DiaryList>
+        </div>
+      </DiaryDispatchContext.Provider>
+    </DiaryStateContext.Provider> 
+  );
+```
+6. 함수들은 useMemo를 통해 재생성되지 않도록 구성해서 전달한다.
+```javascript
+// state 상태변화 함수들을 useMemo로 묶어서 재생성되지 않도록 구성
+const memoizedDispatches = useMemo(()=>{
+ return {onCreate, onRemove, onEdit};
+}, []);
+```
+7. 부모 컴포넌트에서 자식 컴포넌트로 해당 데이터 및 함수를 props로 전달하지 않아도 된다.
+```javascript
+<DiaryList onRemove={onRemove} onEdit={onEdit} diaryList={data}></DiaryList>
+=>
+<DiaryList></DiaryList>
+```
+8. 자식 컴포넌트에서 함수들을 props가 아닌 context로 부터 공급 받는다.
+```javascript
+const DiaryItem = ({id, author, content, emotion, created_date}) => {
+    // context로 부터 함수 공급 받음
+    const {onRemove, onEdit} = useContext(DiaryDispatchContext);
+...
+}
+```

@@ -1,6 +1,10 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect, useContext} from "react";
+import { DiaryDispatchContext } from "./App";
 // props로 받는 함수도 객체처럼 항상 새로운 것으로 인식하여 리렌더링한다.
-const DiaryEditor = ({onCreate}) => {
+const DiaryEditor = () => {
+    // 비구조화 할당으로 onCreate 공급받음
+    const {onCreate} = useContext(DiaryDispatchContext);
+    
     // useRef dom조작을 위한 처리
     const authorInput = useRef();
     const contentInput = useRef();

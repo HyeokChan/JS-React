@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo, useCallback, useReducer } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback, useReducer } from 'react';
 import './App.css';
 import DiaryEditor from './DiaryEditor';
 import DiaryList from './DiaryList';
@@ -29,6 +29,12 @@ const reducer = (state, action) => {
       return state;
   }
 }
+
+// 다른 하위 컴포넌트들이 context를 사용할 수 있게 하기 위해
+// data만 가지고 있는 context로 구성
+export const DiaryStateContext = React.createContext();
+// data를 변경시키는 함수 context로 구성
+export const DiaryDispatchContext = React.createContext();
 
 function App() {
 
@@ -110,18 +116,31 @@ function App() {
 
   const {goodCount, badCount, goodRatio} = getDiaryAnalysis;
 
-  return ( 
-    <div className="App">
-      {/* function 전달 */}
-      {/* <Lifecycle/> */}
-      {/* <OptimizeTest></OptimizeTest> */}
-      <DiaryEditor onCreate={onCreate}></DiaryEditor>
-      <div>전체 일기 : {data.length}</div>
-      <div>기분 좋은 일기 개수 : {goodCount}</div>
-      <div>기분 나쁜 일기 개수 : {badCount}</div>
-      <div>기분 좋은 일기 비율 : {goodRatio}</div>
-      <DiaryList onRemove={onRemove} onEdit={onEdit} diaryList={data}></DiaryList>
-    </div>
+  // state 상태변화 함수들을 useMemo로 묶어서 재생성되지 않도록 구성
+  const memoizedDispatches = useMemo(()=>{
+    return {onCreate, onRemove, onEdit};
+  }, []);
+
+  return (
+    // context 랩핑, 하위 컴포넌트들이 provider가 제공하는 데이터를 모두 사용 가능
+    <DiaryStateContext.Provider value={data}>
+      {/* data를 변화시키는 함수를 가지는 context를 따로 구성 */}
+      <DiaryDispatchContext.Provider value={memoizedDispatches}>
+        <div className="App">
+          {/* function 전달 */}
+          {/* <Lifecycle/> */}
+          {/* <OptimizeTest></OptimizeTest> */}
+          {/* <DiaryEditor onCreate={onCreate}></DiaryEditor> */}
+          <DiaryEditor></DiaryEditor>
+          <div>전체 일기 : {data.length}</div>
+          <div>기분 좋은 일기 개수 : {goodCount}</div>
+          <div>기분 나쁜 일기 개수 : {badCount}</div>
+          <div>기분 좋은 일기 비율 : {goodRatio}</div>
+          {/* <DiaryList onRemove={onRemove} onEdit={onEdit} diaryList={data}></DiaryList> */}
+          <DiaryList></DiaryList>
+        </div>
+      </DiaryDispatchContext.Provider>
+    </DiaryStateContext.Provider> 
   );
 }
 export default App;
