@@ -1177,3 +1177,94 @@ const DiaryItem = ({id, author, content, emotion, created_date}) => {
 3. 페이지라우팅 :
    - App.js안에 라우터를 구성하고 호출되는 url에 따라 어떤 페이지를 노출할 지 결정할 수 있음. 리액트단에서 페이지를 제공하기 때문에 서버와의 통신 시간 필요 없음. 타이틀 및 아이콘 깜박이지 않는 것으로 확인 가능
    - 버튼 등을 통해 다른 페이지로 이동하기 위해서는 Link 키워드 사용. 기존의 a 태그 사용하지 않음 (a 태그는 외부 페이지를 호출할 때에만 사용함)
+```javascript
+function App() {
+  return (
+    <BrowserRouter>
+      <div className="App">
+        <h2>App.js</h2>
+        <Routes>
+          <Route path='/' element={<Home/>}></Route>
+          <Route path='/new' element={<New/>}></Route>
+          <Route path='/edit' element={<Edit/>}></Route>
+          <Route path='/diary' element={<Diary/>}></Route>
+        </Routes>
+        <RouteTest></RouteTest>
+      </div>
+    </BrowserRouter>
+  );
+}
+
+App.js
+```
+```javascript
+const RouteTest = () => {
+   return (
+           <div>
+              <Link to={'/'}>Home</Link>
+              <br></br>
+              <Link to={'/diary'}>Diary</Link>
+              <br></br>
+              <Link to={'/new'}>New</Link>
+              <br></br>
+              <Link to={'/edit'}>Edit</Link>
+              <br></br>
+           </div>
+   );
+};
+export default RouteTest;
+
+RouteTest.js
+```
+
+#### 공통컴포넌트
+1. 여러 화면에서 사용되는 헤더나 버튼 정보도 컴포넌트로 만들어서 전달하는 prop에 따라 다르게 보여지도록 설정할 수 있음
+2. 버튼 :
+```javascript
+<MyButton text={"버튼"} onClick={()=>alert("클릭")} type={"positive"}></MyButton>
+<MyButton text={"버튼"} onClick={()=>alert("클릭")} type={"default"}></MyButton>
+<MyButton text={"버튼"} onClick={()=>alert("클릭")} type={"negative"}></MyButton>
+[App.js]
+
+const MyButton = ({text, type, onClick}) => {
+   const btnType = ["positive", "negative"].includes(type) ? type : "default";
+   return (
+           // join을 이용하여 여러 클래스 지정
+           <button className={["MyButton", `MyButton_${type}`].join(" ")} onClick={onClick}>
+              {text}
+           </button>
+   );
+};
+
+MyButton.defaultProps = {
+   type: "default",
+};
+export default MyButton;
+[MyButton.js]
+```
+3. 헤더 :
+```javascript
+<MyHeader headText={"App"} 
+         leftChild={<MyButton text={"왼쪽 버튼"} type={"default"} onClick={()=>alert("왼쪽클릭")} />}
+         rightChild={<MyButton text={"오른쪽 버튼"} type={"default"} onClick={()=>alert("오른쪽클릭")} />} >\
+</MyHeader>
+[App.js]
+
+const MyHeader = ({headText, leftChild, rightChild}) => {
+   return (
+           <header>
+              <div className="head_btn_left">
+                 {leftChild}
+              </div>
+              <div className="head_text">
+                 {headText}
+              </div>
+              <div className="head_btn_right">
+                 {rightChild}
+              </div>
+           </header>
+   );
+};
+export default MyHeader;
+[MyHeader.js]
+```
