@@ -1169,3 +1169,9 @@ const DiaryItem = ({id, author, content, emotion, created_date}) => {
 ...
 }
 ```
+
+### React 실전 프로젝트
+#### 페이지 라우팅
+1. MPA : 기존에 MPA(multi page application)은 화면과 데이터를 모두 서버를 통해 제공 받고 출력하여 시간이 더 오래걸림
+2. SPA : React와 같은 Single page aaplication은 화면은 서버와의 통신 없이 React가 직접 제공하고 data가 필요한 경우에만 서버와 통신하여 data를 뿌려주는 방식. 속도 향상. 클라이언트가 페이지를 렌더링한다고 하여 CSR(Client side rendering)이라고도 함
+
