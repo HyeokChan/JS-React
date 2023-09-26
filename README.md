@@ -1174,4 +1174,6 @@ const DiaryItem = ({id, author, content, emotion, created_date}) => {
 #### 페이지 라우팅
 1. MPA : 기존에 MPA(multi page application)은 화면과 데이터를 모두 서버를 통해 제공 받고 출력하여 시간이 더 오래걸림
 2. SPA : React와 같은 Single page aaplication은 화면은 서버와의 통신 없이 React가 직접 제공하고 data가 필요한 경우에만 서버와 통신하여 data를 뿌려주는 방식. 속도 향상. 클라이언트가 페이지를 렌더링한다고 하여 CSR(Client side rendering)이라고도 함
-
+3. 페이지라우팅 :
+   - App.js안에 라우터를 구성하고 호출되는 url에 따라 어떤 페이지를 노출할 지 결정할 수 있음. 리액트단에서 페이지를 제공하기 때문에 서버와의 통신 시간 필요 없음. 타이틀 및 아이콘 깜박이지 않는 것으로 확인 가능
+   - 버튼 등을 통해 다른 페이지로 이동하기 위해서는 Link 키워드 사용. 기존의 a 태그 사용하지 않음 (a 태그는 외부 페이지를 호출할 때에만 사용함)
