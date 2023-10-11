@@ -133,8 +133,8 @@ function App() {
             <Routes>
               <Route path='/' element={<Home/>}></Route>
               <Route path='/new' element={<New/>}></Route>
-              <Route path='/edit' element={<Edit/>}></Route>
-              <Route path='/diary' element={<Diary/>}></Route>
+              <Route path='/edit/:id' element={<Edit/>}></Route>
+              <Route path='/diary/:id' element={<Diary/>}></Route>
             </Routes>
             {/* <RouteTest></RouteTest> */}
           </div>
