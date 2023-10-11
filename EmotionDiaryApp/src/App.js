@@ -82,9 +82,10 @@ function App() {
 
   const [data, dispatch] = useReducer(reducer, dummyData);
 
-  const dataId = useRef(0);
+  const dataId = useRef(dummyData.length);
   // CREATE
   const onCreate = (date, content, emotion) => {
+    dataId.current++;
     dispatch({
       type:"CREATE", 
       data:{
@@ -94,7 +95,6 @@ function App() {
         emotion,
       }
     });
-    data.current++;
   }
   // REMOVE
   const onRemove = (targetId) => {
