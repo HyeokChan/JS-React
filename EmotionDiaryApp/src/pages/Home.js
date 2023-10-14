@@ -6,7 +6,7 @@ import { DiaryStateContext } from "../App";
 
 const Home = () => {
     const diaryList = useContext(DiaryStateContext);
-    const [data, setData] = useState([]);
+    const [data, setData] = useState(diaryList);
     const [curDate, setCurDate] = useState(new Date());
     const headText = `${curDate.getFullYear()}년 ${curDate.getMonth()+1}월`;
     
@@ -18,6 +18,7 @@ const Home = () => {
         }
     }, [diaryList, curDate]);
 
+    // state가 변경되면서 재rendering 수행됨
     const increaseMonth = () =>{
         setCurDate(new Date(curDate.getFullYear(), curDate.getMonth()+1, curDate.getDate()));
     }

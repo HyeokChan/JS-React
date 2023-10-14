@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MyButton from "./MyButton";
 import DiaryItem from "./DiaryItem";
@@ -15,18 +15,21 @@ const filterOptionList = [
 ];
 
 
-const ControlMenu = ({value, onChange, optionList}) => {
-    return (
-        <select className="ControlMenu" value={value} onChange={(e)=>onChange(e.target.value)}>
-            {optionList.map((it, idx)=> (
-                <option key={idx} value={it.value}>
-                    {it.name}
-                </option>
-            ))}
-        </select>
-    );
-    
-};
+// Home렌더링 => DiaryList렌더링 => ControlMenu렌더링 (자식요소도 재렌더링)
+// setState를 전달받는 경우는 useCallback까지 사용하지 않아도됨
+const ControlMenu = React.memo(({value, onChange, optionList}) => {
+        return (
+            <select className="ControlMenu" value={value} onChange={(e)=>onChange(e.target.value)}>
+                {optionList.map((it, idx)=> (
+                    <option key={idx} value={it.value}>
+                        {it.name}
+                    </option>
+                ))}
+            </select>
+        );
+        
+    }
+);
 
 const DiaryList = ({diaryList}) => {
     const navigate = useNavigate();
@@ -44,7 +47,7 @@ const DiaryList = ({diaryList}) => {
         }
 
         const compare = (a, b) => {
-            if(sortType === 'latest'){
+            if(sortType === "latest"){
                 return parseInt(b.date) - parseInt(a.date);
             } else {
                 return parseInt(a.date) - parseInt(b.date);
